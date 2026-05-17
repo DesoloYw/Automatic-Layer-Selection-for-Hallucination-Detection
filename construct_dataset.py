@@ -23,8 +23,8 @@ from src.construct_dataset_utils import load_hotpotqa,load_triviaqa,load_coqa,lo
 # Get current file path
 from pathlib import Path
 PROJECT_PATH = str(Path.cwd())
-MODEL_CACHE_DIR = "/bigtemp/hqr4gx/Model"
-Data_CACHE_DIR = "/bigtemp/hqr4gx/Dataset"
+MODEL_CACHE_DIR = "path2model"
+Data_CACHE_DIR = "path2dataset"
 def parse_args() -> argparse.Namespace:
     parser = argparse.ArgumentParser(description=__doc__)
     parser.add_argument(
@@ -310,7 +310,7 @@ def main(args) -> None:
 
     labels= measure_correctness(dataset_iter, args)
     dataset_iter = dataset_iter.add_column("label", labels)
-    # dataset_iter = dataset_iter.add_column("matched_ground_truth", matched_ground_truths) 
+
     df_clean=remove_NAN(dataset_iter)
 
     df_clean['candidate_answers']=df_clean['candidate_answers'].apply(lambda x: x.tolist())
@@ -366,8 +366,8 @@ if __name__ == "__main__":
             
     def all_data_judge(args):
         if args.all_data:
-            for dataset_name in ['squad','coqa','hotpotqa','triviaqa','psiloqa','math']:
-            # for dataset_name in ['squad','coqa','hotpotqa','triviaqa','psiloqa','math','halueval_summary']:
+            for dataset_name in ['squad','coqa','hotpotqa','triviaqa','psiloqa',]:
+
                 args.dataset=dataset_name
                 split_judge(args)
         else:

@@ -14,14 +14,14 @@ MODEL2HF={
     "mistral-7b-0.3":"mistralai/Mistral-7B-v0.3",
     "llama2-13b":"meta-llama/Llama-2-13b-hf",
     "llama3.1-8b":"meta-llama/Llama-3.1-8B",
-    "llama3.2_1b_instruct":"/bigtemp/hqr4gx/Model/Llama-3.2-1B-Instruct",
-    "llama3.2_3b_instruct":"/bigtemp/hqr4gx/Model/Llama-3.2-3B-Instruct",
+    "llama3.2_1b_instruct":"/bigtemp/usr/Model/Llama-3.2-1B-Instruct",
+    "llama3.2_3b_instruct":"/bigtemp/usr/Model/Llama-3.2-3B-Instruct",
     "mistral_instruct":"mistralai/Mistral-7B-Instruct-v0.3",
     "llama_instruct":"meta-llama/Llama-3.1-8B-Instruct",
-    "llama3.2-1b":"/bigtemp/hqr4gx/Model/Llama-3.2-1B",
-    "llama3.2-3b":"/bigtemp/hqr4gx/Model/Llama-3.2-3B",
-    "qwen2.5_14b_instruct":"/bigtemp/hqr4gx/Model/Qwen2.5-14B-Instruct",
-    "qwen2.5_14b":"/bigtemp/hqr4gx/Model/Qwen2.5-14B"
+    "llama3.2-1b":"/bigtemp/usr/Model/Llama-3.2-1B",
+    "llama3.2-3b":"/bigtemp/usr/Model/Llama-3.2-3B",
+    "qwen2.5_14b_instruct":"/bigtemp/usr/Model/Qwen2.5-14B-Instruct",
+    "qwen2.5_14b":"/bigtemp/usr/Model/Qwen2.5-14B"
 }
 MODEL2LAYER = {
     "llama2-7b": 32,

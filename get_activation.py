@@ -30,8 +30,8 @@ from src.construct_dataset_utils import build_prompt_answer
 from method.curvature import curvature
 from pathlib import Path
 PROJECT_PATH = str(Path.cwd())
-MODEL_CACHE_DIR = "/bigtemp/hqr4gx/Model"
-Data_CACHE_DIR = "/bigtemp/hqr4gx/Dataset"
+MODEL_CACHE_DIR = "path2model"
+Data_CACHE_DIR = "path2dataset"
 # ----------------------
 # Args
 # ----------------------
@@ -320,9 +320,7 @@ def main(args):
     pred_acts_path = os.path.join(base_save_path, "predicted")
     label_path     = os.path.join(base_save_path, "labels")
     curv_base_path = os.path.join(PROJECT_PATH, "results", f"{args.model}", f"{args.dataset}","curvature")
-    # gradient_base_path = os.path.join(
-    #     PROJECT_PATH, "results", f"{args.model}", f"{args.dataset}", "gradient"
-    # )
+
     dirs_to_create = [curv_base_path] if args.curvature else []
     if not args.dont_save:
         dirs_to_create.extend([base_save_path, gt_acts_path, pred_acts_path, label_path])
@@ -381,7 +379,7 @@ if __name__ == "__main__":
 
     def run_all_datasets(a):
         if a.all_data:
-            for dataset_name in ["coqa", "squad", "hotpotqa", "triviaqa", "math", "psiloqa"]:
+            for dataset_name in ["coqa", "squad", "hotpotqa", "triviaqa", "psiloqa"]:
                 aa = copy.deepcopy(a)
                 aa.dataset = dataset_name
                 run_all_splits(aa)

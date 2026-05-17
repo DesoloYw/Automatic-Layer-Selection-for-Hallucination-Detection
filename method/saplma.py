@@ -66,17 +66,7 @@ class _LogReg(nn.Module):
         x = x.to(self.net[0].weight.dtype)
         return self.net(x)
 
-    @torch.no_grad()
-    def last_hidden_features(self, x: torch.Tensor) -> torch.Tensor:
-        """
-        Returns features before the final classification layer (Linear(64->2)): shape [B, 64]
-        """
-        x = x.to(self.net[0].weight.dtype)
-        h = x
-        # run through all modules except the last one (i.e., ReLU after 128->64)
-        for layer in self.net[:-1]:
-            h = layer(h)
-        return h
+
 
 
 class SAPLMA(LID):
@@ -270,14 +260,7 @@ class SAPLMA(LID):
                 + rgn_compute_time_sec
                 + snr_compute_time_sec
             )
-            # id_lastfeat = self._twonn_id_from_last_features(
-            #     model=model,
-            #     X=train_X_all,
-            #     device=device,
-            #     batch_size=4096,
-            #     max_points=20000,
-            #     random_state=0,
-            # )
+
             model.eval()
             test_dataset = TensorDataset(test_X)
             test_loader  = DataLoader(
@@ -306,7 +289,7 @@ class SAPLMA(LID):
                     "best_val_loss": float(best_val_loss),
                     "rgn": float(rgn_layer),
                     "snr": float(snr_layer),
-                    # "id_lastfeat_twonn": float(id_lastfeat),
+                    
                     "training_process_time_sec": float(training_process_time_sec),
                     "best_val_loss_compute_time_sec": float(best_val_loss_compute_time_sec),
                     "rgn_compute_time_sec": float(rgn_compute_time_sec),
@@ -522,49 +505,6 @@ class SAPLMA(LID):
         model.zero_grad(set_to_none=True)
         return snr_layer
 
-    def _twonn_id_from_last_features(
-        self,
-        model: _LogReg,
-        X: torch.Tensor,
-        device: torch.device,
-        batch_size: int = 4096,
-        max_points: int = 20000,
-        random_state: int = 0,
-    ) -> float:
-        """
-        Estimates the intrinsic dimension of the probe's last-layer features using skdim TwoNN.
-        - X: [N, D] (val_X or train_X_all recommended)
-        - max_points: cap on points to prevent TwoNN from being too slow/memory-heavy (default 20k)
-        """
-        model.eval()
-
-        # ---- optional downsampling ----
-        N = X.size(0)
-        if N > max_points:
-            g = torch.Generator(device=X.device)
-            g.manual_seed(random_state)
-            idx = torch.randperm(N, generator=g, device=X.device)[:max_points]
-            X_use = X[idx]
-        else:
-            X_use = X
-
-        feats_list = []
-        loader = DataLoader(TensorDataset(X_use), batch_size=batch_size, shuffle=False)
-
-        with torch.no_grad():
-            for (bx,) in loader:
-                bx = bx.to(device)
-                f = model.last_hidden_features(bx)   # [b, 64]
-                feats_list.append(f.detach().float().cpu().numpy())
-
-        feats = np.concatenate(feats_list, axis=0)  # [N_use, 64]
-
-        # ---- fit skdim TwoNN ----
-        estimator = TwoNN()
-        estimator.fit(feats)
-        id_val = float(estimator.dimension_)
-        return id_val
-
     def _plot_layer_metrics(self, df: pd.DataFrame, hidden_dim1: int) -> None:
         """
         df must contain columns: ["layer", "auroc_saplma", "best_val_loss", "rgn", "snr"]
@@ -606,30 +546,7 @@ class SAPLMA(LID):
         # ---------- right axis: normalized ValLoss / RGN / SNR ----------
         ax2 = ax1.twinx()
 
-        # ln2 = ax2.plot(
-        #     layers,
-        #     val_losses_norm,
-        #     marker="s",
-        #     linestyle="-",
-        #     color="tab:red",
-        #     label="Norm. Val Loss",
-        # )
-        # ln3 = ax2.plot(
-        #     layers,
-        #     rgns_norm,
-        #     marker="^",
-        #     linestyle="-",
-        #     color="tab:green",
-        #     label="Norm. RGN",
-        # )
-        # ln4 = ax2.plot(
-        #     layers,
-        #     snrs_norm,
-        #     marker="d",
-        #     linestyle="-",
-        #     color="tab:purple",
-        #     label="Norm. SNR",
-        # )
+
         ln4 = ax2.plot(
             layers,
             ID,
