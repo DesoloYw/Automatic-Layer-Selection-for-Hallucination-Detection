@@ -225,25 +225,4 @@ def ensure_dir(path: List[str] | str) -> None:
         os.makedirs(path, exist_ok=True)
 
 
-def final_id_by_plateau(ids_k, k1, window=5):
-    """
-    ids_k: shape (k2-k1+1,)  ID curve corresponding to k1..k2
-    returns:
-      best_id: mean within the flattest window
-      best_k_range: (k_start, k_end) actual k range of the window
-      best_var: variance within the window (smaller means flatter)
-    """
-    ids_k = np.asarray(ids_k)
-    if window < 2 or window > len(ids_k):
-        raise ValueError(f"window must be in [2, {len(ids_k)}], got {window}")
 
-    best_i, best_var = 0, np.inf
-    for i in range(0, len(ids_k) - window + 1):
-        v = np.var(ids_k[i:i+window])
-        if v < best_var:
-            best_var = v
-            best_i = i
-
-    best_id = float(ids_k[best_i:best_i+window].mean())
-    best_k_range = (k1 + best_i, k1 + best_i + window - 1)
-    return best_id, best_k_range, best_var
